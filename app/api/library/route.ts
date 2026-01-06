@@ -3,6 +3,13 @@ import { NextResponse } from "next/server";
 // import { prisma } from "../../lib/prisma";
 import { adminAuth } from "../../lib/firebase-admin";
 import {prisma} from "../../lib/prisma"
+import { Book } from "../../lib/types"; // adjust the path if needed
+
+interface LibraryRow {
+  book: Book;
+}
+
+
 
 export async function GET(req: Request) {
   try {
@@ -24,7 +31,23 @@ export async function GET(req: Request) {
     });
 
     // Map to Book[]
-    const books = libraryRows.map((row) => row.book);
+    // const books = libraryRows.map((row) => row.book);
+   const books: Book[] = libraryRows.map((row) => ({
+  id: row.book.id,
+  title: row.book.title,
+  author: row.book.author,
+  subTitle: "", // default empty string
+  imageLink: row.book.imageLink ?? "",
+  averageRating:  0,// default
+  totalRating:  0,
+  subscriptionRequired:  false,
+  tags: [],
+  bookDescription: "",
+  authorDescription: "",
+  audioLink: "",
+  summary: "",
+}));
+
 
     return NextResponse.json(books);
   } catch (error: unknown) {
