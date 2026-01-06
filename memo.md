@@ -208,3 +208,9 @@ npm run dev
       rm -rf .next
 
       npm run dev
+
+
+      Step 3: Clean install locally
+          npm install
+    npx prisma generate
+     npm run build

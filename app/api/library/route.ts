@@ -1,3 +1,107 @@
+// app/api/library/route.ts
+// import { NextResponse } from "next/server";
+// import { prisma } from "../../lib/prisma";
+// import { adminAuth } from "../../lib/firebase-admin";
+// import { Book } from "../../lib/types";
+
+// // Type returned by Prisma for library rows
+// type LibraryRowFromDB = {
+//   id: string;
+//   userId: string;
+//   bookId: string;
+//   book: {
+//     id: string;
+//     title: string;
+//     author: string;
+//     subTitle?: string;
+//     imageLink?: string;
+//     averageRating?: number;
+//     totalRating?: number;
+//     subscriptionRequired?: boolean;
+//     tags?: string[];
+//     bookDescription?: string;
+//     authorDescription?: string;
+//     audioLink?: string;
+//     summary?: string;
+//   };
+// };
+
+// export async function GET(req: Request) {
+//   try {
+//     // 1️⃣ Check Authorization header
+//     const authHeader = req.headers.get("authorization");
+//     if (!authHeader) return NextResponse.json([], { status: 401 });
+
+//     const token = authHeader.replace("Bearer ", "");
+//     const decoded = await adminAuth.verifyIdToken(token);
+//     if (!decoded.uid) return NextResponse.json([], { status: 401 });
+
+//     // 2️⃣ Find user in DB
+//     const user = await prisma.user.findUnique({
+//       where: { firebaseUid: decoded.uid },
+//     });
+//     if (!user) return NextResponse.json([], { status: 200 });
+
+//     // 3️⃣ Fetch library rows with related books
+//     const libraryRows: LibraryRowFromDB[] = await prisma.library.findMany({
+//       where: { userId: user.id },
+//       include: {
+//         book: {
+//           select: {
+//             id: true,
+//             title: true,
+//             author: true,
+//             subTitle: true,
+//             imageLink: true,
+//             averageRating: true,
+//             totalRating: true,
+//             subscriptionRequired: true,
+//             tags: true,
+//             bookDescription: true,
+//             authorDescription: true,
+//             audioLink: true,
+//             summary: true,
+//           },
+//         },
+//       },
+//     });
+
+//     // 4️⃣ Map to full Book[]
+//     const books: Book[] = libraryRows.map((row) => ({
+//       id: row.book.id,
+//       title: row.book.title,
+//       author: row.book.author,
+//       subTitle: row.book.subTitle ?? "",
+//       imageLink: row.book.imageLink ?? "",
+//       averageRating: row.book.averageRating ?? 0,
+//       totalRating: row.book.totalRating ?? 0,
+//       subscriptionRequired: row.book.subscriptionRequired ?? false,
+//       tags: row.book.tags ?? [],
+//       bookDescription: row.book.bookDescription ?? "",
+//       authorDescription: row.book.authorDescription ?? "",
+//       audioLink: row.book.audioLink ?? "",
+//       summary: row.book.summary ?? "",
+//     }));
+
+//     return NextResponse.json(books);
+//   } catch (error: unknown) {
+//     console.error("GET /api/library error:", error);
+//     return NextResponse.json([], { status: 500 });
+//   }
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // app/api/library/route.ts
 import { NextResponse } from "next/server";
