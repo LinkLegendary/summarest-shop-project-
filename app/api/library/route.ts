@@ -5,9 +5,22 @@ import { adminAuth } from "../../lib/firebase-admin";
 import {prisma} from "../../lib/prisma"
 import { Book } from "../../lib/types"; // adjust the path if needed
 
-interface LibraryRow {
-  book: Book;
-}
+
+
+type LibraryRowFromDB = {
+  id: string;
+  userId: string;
+  bookId: string;
+  book: {
+    id: string;
+    title: string;
+    author: string;
+    imageLink?: string;
+  };
+};
+
+
+
 
 
 
@@ -25,7 +38,7 @@ export async function GET(req: Request) {
     if (!user) return NextResponse.json([], { status: 200 });
 
     // Fetch library rows with related books
-    const libraryRows = await prisma.library.findMany({
+    const libraryRows:LibraryRowFromDB[] = await prisma.library.findMany({
       where: { userId: user.id },
       include: { book: true }, // Include book info
     });
