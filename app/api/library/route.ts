@@ -1,0 +1,130 @@
+// app/api/library/route.ts
+import { NextResponse } from "next/server";
+// import { prisma } from "../../lib/prisma";
+import { adminAuth } from "../../lib/firebase-admin";
+import {prisma} from "../../lib/prisma"
+
+export async function GET(req: Request) {
+  try {
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader) return NextResponse.json([], { status: 401 });
+
+    const token = authHeader.replace("Bearer ", "");
+    const decoded = await adminAuth.verifyIdToken(token);
+    if (!decoded.uid) return NextResponse.json([], { status: 401 });
+
+    // Find user in DB
+    const user = await prisma.user.findUnique({ where: { firebaseUid: decoded.uid } });
+    if (!user) return NextResponse.json([], { status: 200 });
+
+    // Fetch library rows with related books
+    const libraryRows = await prisma.library.findMany({
+      where: { userId: user.id },
+      include: { book: true }, // Include book info
+    });
+
+    // Map to Book[]
+    const books = libraryRows.map((row) => row.book);
+
+    return NextResponse.json(books);
+  } catch (error: unknown) {
+    console.error("GET /api/library error:", error);
+    return NextResponse.json([], { status: 500 });
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// import { NextResponse } from "next/server";
+// import { db } from "@/app/lib/prisma";
+// import { adminAuth } from "@/app/lib/firebase-admin";
+
+// export async function GET(req: Request) {
+//   try {
+//     const authHeader = req.headers.get("authorization");
+//     const token = authHeader?.replace("Bearer ", "");
+
+//     if (!token) return NextResponse.json([]);
+
+//     const decoded = await adminAuth.verifyIdToken(token);
+
+// const user = await db.user.findUnique({
+//   where: { firebaseUid: decoded.uid },
+// });
+
+// if (!user) {
+//   return NextResponse.json([]);
+// }
+
+
+
+
+
+
+    // const user = await db.user.upsert({
+    //   where: { firebaseUid: decoded.uid },
+    //   update: {},
+    //   create: {
+    //     firebaseUid: decoded.uid,
+    //     email: decoded.email,
+    //   },
+    // });
+
+//     const library = await db.library.findMany({
+//       where: { userId: user.id },
+//       include: { book: true },
+//     });
+
+//     return NextResponse.json(library.map((l) => l.book));
+//   } catch (e) {
+//     console.error(e);
+//     return NextResponse.json([], { status: 500 });
+//   }
+// }
+
+
+
+
+
+// import { NextResponse } from "next/server";
+// import { db } from "@/app/lib/prisma";
+// import { adminAuth } from "@/app/lib/firebase-admin";
+
+// export async function GET(req: Request) {
+//   try {
+//     const authHeader = req.headers.get("authorization");
+//     const token = authHeader?.replace("Bearer ", "");
+
+//     if (!token) return NextResponse.json([]);
+
+//     const decoded = await adminAuth.verifyIdToken(token);
+
+//     const user = await db.user.upsert({
+//       where: { firebaseUid: decoded.uid },
+//       update: {},
+//       create: {
+//         firebaseUid: decoded.uid,
+//         email: decoded.email,
+//       },
+//     });
+
+//     const library = await db.library.findMany({
+//       where: { userId: user.id },
+//       include: { book: true },
+//     });
+
+//     return NextResponse.json(library.map((l) => l.book));
+//   } catch (e) {
+//     console.error(e);
+//     return NextResponse.json([], { status: 500 });
+//   }
+// }

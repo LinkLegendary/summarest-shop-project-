@@ -1,0 +1,131 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  
+}
+
+datasource db {
+  provider = "postgresql"
+ 
+}
+
+
+model Subscription {
+  id                   String   @id @default(cuid())
+  userId               String
+  email                String
+  stripeSubscriptionId String   @unique
+  stripePriceId        String
+  unitAmount           Int?
+  currency             String?
+  interval             String?
+  productName          String?
+  status               String
+  currentPeriodEnd     DateTime
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+
+model User {
+  id          String   @id @default(cuid())
+  firebaseUid String   @unique
+  email       String?
+ subscription String   @default("basic")
+  library     Library[]
+  createdAt   DateTime @default(now())
+}
+
+model Book {
+  id        String   @id
+  title     String
+  author    String
+  imageLink String
+  library   Library[]
+}
+
+model Library {
+  id     String @id @default(cuid())
+  userId String
+  bookId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bookId])
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// // This is your Prisma schema file,
+// // learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// generator client {
+//   provider = "prisma-client-js"
+  
+// }
+
+// datasource db {
+//   provider = "postgresql"
+ 
+// }
+
+
+// model Subscription {
+//   id                   String   @id @default(cuid())
+//   userId               String
+//   email                String
+//   stripeSubscriptionId String   @unique
+//   stripePriceId        String
+//   unitAmount           Int?
+//   currency             String?
+//   interval             String?
+//   productName          String?
+//   status               String
+//   currentPeriodEnd     DateTime
+//   createdAt            DateTime @default(now())
+//   updatedAt            DateTime @updatedAt
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+// model Subscription {
+//   id                   String   @id @default(cuid())
+//   userId               String
+//   email                String  // <-- ADD THIS
+//   stripeSubscriptionId String   @unique
+//   stripePriceId        String
+//   status               String
+//   currentPeriodEnd     DateTime
+
+//   createdAt            DateTime @default(now())
+//   updatedAt            DateTime @updatedAt
+// }
+
